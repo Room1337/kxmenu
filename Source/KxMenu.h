@@ -36,11 +36,12 @@
 
 @interface KxMenuItem : NSObject
 
-@property (readwrite, nonatomic, strong) UIImage *image;
-@property (readwrite, nonatomic, strong) NSString *title;
-@property (readwrite, nonatomic, weak) id target;
+// use retain|copy instead of strong & assign instead of weak for compatibility with iOS4
+@property (readwrite, nonatomic, retain) UIImage *image;
+@property (readwrite, nonatomic, copy) NSString *title;
+@property (readwrite, nonatomic) id target;
 @property (readwrite, nonatomic) SEL action;
-@property (readwrite, nonatomic, strong) UIColor *foreColor;
+@property (readwrite, nonatomic, retain) UIColor *foreColor;
 @property (readwrite, nonatomic) NSTextAlignment alignment;
 
 + (instancetype) menuItem:(NSString *) title
@@ -54,6 +55,11 @@
 
 + (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect
+          withMenuItems:(NSArray *)menuItems;
+
++ (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+        withOrientation:(UIInterfaceOrientation)orientation
               menuItems:(NSArray *)menuItems;
 
 + (void) dismissMenu;
@@ -63,5 +69,9 @@
 
 + (UIFont *) titleFont;
 + (void) setTitleFont: (UIFont *) titleFont;
+
+#if 1
++ (void) showMenuInView:(UIView *)view fromRect:(CGRect)rect menuItems:(NSArray *)menuItems; // "menuItems" instead of "withMenuItems", used only by test app
+#endif
 
 @end

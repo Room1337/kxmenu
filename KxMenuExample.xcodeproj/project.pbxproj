@@ -37,15 +37,15 @@
 		87292BAB1746668300821739 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		87292BAF1746668300821739 /* KxMenuExample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KxMenuExample-Info.plist"; sourceTree = "<group>"; };
 		87292BB11746668300821739 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		87292BB31746668300821739 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		87292BB51746668300821739 /* KxMenuExample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KxMenuExample-Prefix.pch"; sourceTree = "<group>"; };
-		87292BB61746668300821739 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		87292BB71746668300821739 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		87292BB31746668300821739 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; usesTabs = 0; };
+		87292BB51746668300821739 /* KxMenuExample-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KxMenuExample-Prefix.pch"; sourceTree = "<group>"; usesTabs = 0; };
+		87292BB61746668300821739 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; usesTabs = 0; };
+		87292BB71746668300821739 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; usesTabs = 0; };
 		87292BB91746668300821739 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		87292BBB1746668300821739 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		87292BBD1746668300821739 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		87292BBF1746668300821739 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		87292BC01746668300821739 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		87292BBF1746668300821739 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; usesTabs = 0; };
+		87292BC01746668300821739 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; usesTabs = 0; };
 		87292BCE174666F800821739 /* action_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = action_icon.png; path = resources/action_icon.png; sourceTree = "<group>"; };
 		87292BCF174666F800821739 /* action_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "action_icon@2x.png"; path = "resources/action_icon@2x.png"; sourceTree = "<group>"; };
 		87292BD0174666F800821739 /* check_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = check_icon.png; path = resources/check_icon.png; sourceTree = "<group>"; };
@@ -56,8 +56,8 @@
 		87292BD5174666F800821739 /* reload@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "reload@2x.png"; path = "resources/reload@2x.png"; sourceTree = "<group>"; };
 		87292BD6174666F800821739 /* search_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = search_icon.png; path = resources/search_icon.png; sourceTree = "<group>"; };
 		87292BD7174666F800821739 /* search_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "search_icon@2x.png"; path = "resources/search_icon@2x.png"; sourceTree = "<group>"; };
-		87292BE31746670C00821739 /* KxMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KxMenu.h; path = Source/KxMenu.h; sourceTree = "<group>"; };
-		87292BE41746670C00821739 /* KxMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KxMenu.m; path = Source/KxMenu.m; sourceTree = "<group>"; };
+		87292BE31746670C00821739 /* KxMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KxMenu.h; path = Source/KxMenu.h; sourceTree = "<group>"; usesTabs = 0; };
+		87292BE41746670C00821739 /* KxMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KxMenu.m; path = Source/KxMenu.m; sourceTree = "<group>"; usesTabs = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -315,7 +315,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -327,7 +327,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
