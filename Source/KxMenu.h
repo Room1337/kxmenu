@@ -36,10 +36,10 @@
 
 @interface KxMenuItem : NSObject
 
-// use retain|copy instead of strong & assign instead of weak for compatibility with iOS4
+// for compatibility with iOS4 use retain|copy instead of strong, unsafe_unretained instead of weak
 @property (readwrite, nonatomic, retain) UIImage *image;
 @property (readwrite, nonatomic, copy) NSString *title;
-@property (readwrite, nonatomic, assign) id target;
+@property (readwrite, nonatomic, unsafe_unretained) id target;
 @property (readwrite, nonatomic, assign) SEL action;
 @property (readwrite, nonatomic, retain) UIColor *foreColor;
 @property (readwrite, nonatomic, assign) NSTextAlignment alignment;
@@ -51,7 +51,32 @@
 
 @end
 
-@interface KxMenu : NSObject
+
+typedef enum {
+	KxMenuViewArrowDirectionNone,
+    KxMenuViewArrowDirectionUp,
+    KxMenuViewArrowDirectionDown,
+    KxMenuViewArrowDirectionLeft,
+    KxMenuViewArrowDirectionRight,
+} KxMenuViewArrowDirection;
+
+@protocol KxMenuDrawProtocol
+// optional draw method for KxMenu subclasses to override, don't call super
+@optional
+- (CGFloat)arrowSize;
+- (CGFloat)innerBorder;
+- (void) setupBackgroundWithSize:(CGSize)size
+                          inView:(UIView *)view
+              withArrowDirection:(KxMenuViewArrowDirection)arrowDirection
+                     andPosition:(CGFloat)arrowPosition;
+
+- (void) drawBackgroundWithSize:(CGSize)size
+                      inContext:(CGContextRef)ref
+             withArrowDirection:(KxMenuViewArrowDirection)arrowDirection
+                    andPosition:(CGFloat)arrowPosition;
+@end
+
+@interface KxMenu : NSObject <KxMenuDrawProtocol>
 
 + (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect
@@ -62,6 +87,15 @@
         withOrientation:(UIInterfaceOrientation)orientation
               menuItems:(NSArray *)menuItems;
 
++ (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+            withSubview:(UIView *)contentView;
+
++ (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+        withOrientation:(UIInterfaceOrientation)orientation
+                subview:(UIView *)contentView;
+
 + (void) dismissMenu;
 
 + (UIColor *) tintColor;
@@ -70,8 +104,30 @@
 + (UIFont *) titleFont;
 + (void) setTitleFont: (UIFont *) titleFont;
 
-#if 1
-+ (void) showMenuInView:(UIView *)view fromRect:(CGRect)rect menuItems:(NSArray *)menuItems; // "menuItems" instead of "withMenuItems", used only by test app
-#endif
+// instead of calling the class methods which use a menu singleton,
+// can subclass to override draw method then directly call its
+// instance method variants of show/dismiss
+- (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+          withMenuItems:(NSArray *)menuItems;
+
+- (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+        withOrientation:(UIInterfaceOrientation)orientation
+              menuItems:(NSArray *)menuItems;
+
+- (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+            withSubview:(UIView *)contentView;
+
+- (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect
+        withOrientation:(UIInterfaceOrientation)orientation
+                subview:(UIView *)contentView;
+
+- (void) dismissMenu; // subclasses can override, should call super
+
+// for compatibility with old demo code, "menuItems" instead of "withMenuItems"
++ (void) showMenuInView:(UIView *)view fromRect:(CGRect)rect menuItems:(NSArray *)menuItems;
 
 @end
