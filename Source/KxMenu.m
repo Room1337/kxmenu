@@ -164,7 +164,6 @@ const CGFloat kArrowSize = 12.f;
     
     KxMenuViewArrowDirection    _arrowDirection;
     CGFloat                     _arrowPosition;
-    CGPoint                     _arrowPoint;
     UIView                      *_contentView;
     NSArray                     *_menuItems;
     KxMenu                      *_owner;
@@ -202,7 +201,7 @@ const CGFloat kArrowSize = 12.f;
     CGFloat arrowSize = ([_owner respondsToSelector:@selector(arrowSize)]) ? _owner.arrowSize : kArrowSize;
     CGFloat innerBorder = ([_owner respondsToSelector:@selector(innerBorder)]) ? _owner.innerBorder : 0;
     
-    const CGSize contentSize = _contentView.frame.size;
+    const CGSize contentSize = UIInterfaceOrientationIsPortrait(orientation) ? _contentView.frame.size : (CGSize){ _contentView.frame.size.height, _contentView.frame.size.width };
     const CGSize borderedContentSize = CGSizeMake(contentSize.width + innerBorder + innerBorder, contentSize.height + innerBorder + innerBorder);
     
     const CGFloat outerWidth = view.bounds.size.width;
@@ -222,420 +221,130 @@ const CGFloat kArrowSize = 12.f;
     
     const CGFloat kMargin = 5.f;
     
-    // no rotation
     switch(orientation) {
-    case UIInterfaceOrientationPortrait:
-    default:
-        if (heightPlusArrow < (outerHeight - rectY1)) {
+        case UIInterfaceOrientationPortraitUpsideDown:
+            _contentView.transform = CGAffineTransformRotate(_contentView.transform, M_PI);
+            break;
+        case UIInterfaceOrientationLandscapeRight:
+            _contentView.transform = CGAffineTransformRotate(_contentView.transform, M_PI_2);
+            break;
+        case UIInterfaceOrientationLandscapeLeft:
+            _contentView.transform = CGAffineTransformRotate(_contentView.transform, -M_PI_2);
+            break;
+        case UIInterfaceOrientationPortrait:
+        default:
+            break;
+    }
+    
+    if (heightPlusArrow < (outerHeight - rectY1)) {
+    
+        _arrowDirection = KxMenuViewArrowDirectionUp;
+        CGPoint point = (CGPoint){
+            rectXM - widthHalf,
+            rectY1
+        };
         
-            _arrowDirection = KxMenuViewArrowDirectionUp;
-            CGPoint point = (CGPoint){
-                rectXM - widthHalf,
-                rectY1
-            };
-            
-            if (point.x < kMargin)
-                point.x = kMargin;
-            
-            if ((point.x + borderedContentSize.width + kMargin) > outerWidth)
-                point.x = outerWidth - borderedContentSize.width - kMargin;
-            
-            _arrowPosition = rectXM - point.x;
-            _arrowPoint = (CGPoint){ _arrowPosition, 0 };
-            //_arrowPosition = MAX(16, MIN(_arrowPosition, borderedContentSize.width - 16));        
-            _contentView.frame = (CGRect){innerBorder, arrowSize + innerBorder, contentSize};
-                    
-            self.frame = (CGRect) {
+        if (point.x < kMargin)
+            point.x = kMargin;
+        
+        if ((point.x + borderedContentSize.width + kMargin) > outerWidth)
+            point.x = outerWidth - borderedContentSize.width - kMargin;
+        
+        _arrowPosition = rectXM - point.x;
+        //_arrowPosition = MAX(16, MIN(_arrowPosition, borderedContentSize.width - 16));        
+        _contentView.frame = (CGRect){innerBorder, arrowSize + innerBorder, contentSize};
                 
-                point,
-                borderedContentSize.width,
-                borderedContentSize.height + arrowSize
-            };
+        self.frame = (CGRect) {
             
-        } else if (heightPlusArrow < rectY0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionDown;
-            CGPoint point = (CGPoint){
-                rectXM - widthHalf,
-                rectY0 - heightPlusArrow
-            };
-            
-            if (point.x < kMargin)
-                point.x = kMargin;
-            
-            if ((point.x + borderedContentSize.width + kMargin) > outerWidth)
-                point.x = outerWidth - borderedContentSize.width - kMargin;
-            
-            _arrowPosition = rectXM - point.x;
-            _arrowPoint = (CGPoint){ _arrowPosition, borderedContentSize.height };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                
-                point,
-                borderedContentSize.width,
-                borderedContentSize.height + arrowSize
-            };
-            
-        } else if (widthPlusArrow < (outerWidth - rectX1)) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionLeft;
-            CGPoint point = (CGPoint){
-                rectX1,
-                rectYM - heightHalf
-            };
-            
-            if (point.y < kMargin)
-                point.y = kMargin;
-            
-            if ((point.y + borderedContentSize.height + kMargin) > outerHeight)
-                point.y = outerHeight - borderedContentSize.height - kMargin;
-            
-            _arrowPosition = rectYM - point.y;
-            _arrowPoint = (CGPoint){ 0, _arrowPosition };
-            _contentView.frame = (CGRect){arrowSize + innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else if (widthPlusArrow < rectX0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionRight;
-            CGPoint point = (CGPoint){
-                rectX0 - widthPlusArrow,
-                rectYM - heightHalf
-            };
-            
-            if (point.y < kMargin)
-                point.y = kMargin;
-            
-            if ((point.y + borderedContentSize.height + 5) > outerHeight)
-                point.y = outerHeight - borderedContentSize.height - kMargin;
-            
-            _arrowPosition = rectYM - point.y;
-            _arrowPoint = (CGPoint){ borderedContentSize.width, _arrowPosition };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                
-                point,
-                borderedContentSize.width  + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else {
-            
-            _arrowDirection = KxMenuViewArrowDirectionNone;
-            _arrowPosition = 0;
-            _arrowPoint = (CGPoint){ borderedContentSize.width * 0.5f, borderedContentSize.height * 0.5f };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                
-                (outerWidth - borderedContentSize.width)   * 0.5f,
-                (outerHeight - borderedContentSize.height) * 0.5f,
-                borderedContentSize,
-            };
-        }
-        break;
+            point,
+            borderedContentSize.width,
+            borderedContentSize.height + arrowSize
+        };
         
+    } else if (heightPlusArrow < rectY0) {
         
+        _arrowDirection = KxMenuViewArrowDirectionDown;
+        CGPoint point = (CGPoint){
+            rectXM - widthHalf,
+            rectY0 - heightPlusArrow
+        };
         
-    case UIInterfaceOrientationPortraitUpsideDown:
-        if (heightPlusArrow < (outerHeight - rectY1)) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionDown;
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM - widthHalf,
-                rectY1 - heightPlusArrow
-            };
-            
-            if (rectXM - widthHalf < kMargin)
-                point.x -= kMargin - (rectXM - widthHalf);
-                
-            else if ((rectXM - widthHalf) + borderedContentSize.width > outerWidth - kMargin)
-                point.x += ((rectXM - widthHalf) + borderedContentSize.width) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectXM - point.x;
-            _arrowPoint = (CGPoint){ _arrowPosition, borderedContentSize.height };
-            
-            // the order that the following 3 properties are set absolutely matters,
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(_arrowPosition / borderedContentSize.width, 1.0);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width,
-                borderedContentSize.height + arrowSize
-            };
-            
-        } else if (heightPlusArrow < rectY0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionUp;
-            _contentView.frame = (CGRect){innerBorder, arrowSize + innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM - widthHalf,
-                rectY0
-            };
-            
-            if (rectXM - widthHalf < kMargin)
-                point.x -= kMargin - (rectXM - widthHalf);
-                
-            else if ((rectXM - widthHalf) + borderedContentSize.width > outerWidth - kMargin)
-                point.x += ((rectXM - widthHalf) + borderedContentSize.width) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectXM - point.x;
-            _arrowPoint = (CGPoint){ _arrowPosition, 0 };
-            
-            // the order that the following 3 properties are set absolutely matters,
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(_arrowPosition / borderedContentSize.width, 0.0);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width,
-                borderedContentSize.height + arrowSize
-            };
-            
-        } else if (widthPlusArrow < (outerWidth - rectX1)) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionRight;
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectX1 - widthPlusArrow,
-                rectYM - heightHalf
-            };
-            
-            // these point.y manipulations are probably not correct:
-            if (point.y < kMargin)
-                point.y = kMargin;
-            
-            if ((point.y + borderedContentSize.height + kMargin) > outerHeight)
-                point.y = outerHeight - borderedContentSize.height - kMargin;
-            
-            _arrowPosition = rectYM - point.y;
-            _arrowPoint = (CGPoint){ borderedContentSize.width, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters,
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(1.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else if (widthPlusArrow < rectX0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionLeft;
-            _contentView.frame = (CGRect){arrowSize + innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectX0,
-                rectYM - heightHalf
-            };
-            
-            // these point.y manipulations are probably not correct:
-            if (point.y < kMargin)
-                point.y = kMargin;
-            
-            if ((point.y + borderedContentSize.height + 5) > outerHeight)
-                point.y = outerHeight - borderedContentSize.height - kMargin;
-            
-            _arrowPosition = rectYM - point.y;
-            _arrowPoint = (CGPoint){ 0, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters,
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(0.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else {
-            
-            _arrowDirection = KxMenuViewArrowDirectionNone;
-            _arrowPosition = 0;
-            _arrowPoint = (CGPoint){ borderedContentSize.width * 0.5f, borderedContentSize.height * 0.5f };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                (outerWidth - borderedContentSize.width)   * 0.5f,
-                (outerHeight - borderedContentSize.height) * 0.5f,
-                borderedContentSize,
-            };
-        }
+        if (point.x < kMargin)
+            point.x = kMargin;
         
-        self.transform = CGAffineTransformMakeRotation(M_PI);
-        break;
+        if ((point.x + borderedContentSize.width + kMargin) > outerWidth)
+            point.x = outerWidth - borderedContentSize.width - kMargin;
         
+        _arrowPosition = rectXM - point.x;
+        _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
         
+        self.frame = (CGRect) {
+            
+            point,
+            borderedContentSize.width,
+            borderedContentSize.height + arrowSize
+        };
         
-    case UIInterfaceOrientationLandscapeRight:
-        if (widthPlusArrow < (outerHeight - rectY1)) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionLeft;
-            _contentView.frame = (CGRect){arrowSize + innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM,
-                rectY1 - heightHalf
-            };
-            
-            if (rectXM - heightHalf < kMargin)
-                point.y -= kMargin - (rectXM - heightHalf);
-                
-            else if (rectXM + heightHalf > outerWidth - kMargin)
-                point.y += (rectXM + heightHalf) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectY1 - point.y;
-            _arrowPoint = (CGPoint){ 0, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters (the last one, transform, is further below),
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(0.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else if (widthPlusArrow < rectY0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionRight;
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM - widthPlusArrow,
-                rectY0 - heightHalf
-            };
-            
-            if (rectXM - heightHalf < kMargin)
-                point.y -= kMargin - (rectXM - heightHalf);
-                
-            else if (rectXM + heightHalf > outerWidth - kMargin)
-                point.y += (rectXM + heightHalf) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectY0 - point.y;
-            _arrowPoint = (CGPoint){ borderedContentSize.width, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters (the last one, transform, is further below),
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(1.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else {
-            
-            _arrowDirection = KxMenuViewArrowDirectionNone;
-            _arrowPosition = 0;
-            _arrowPoint = (CGPoint){ borderedContentSize.width * 0.5f, borderedContentSize.height * 0.5f };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                (outerWidth - borderedContentSize.width)   * 0.5f,
-                (outerHeight - borderedContentSize.height) * 0.5f,
-                borderedContentSize,
-            };
-        }
+    } else if (widthPlusArrow < (outerWidth - rectX1)) {
         
-        self.transform = CGAffineTransformMakeRotation(M_PI_2);
-        break;
+        _arrowDirection = KxMenuViewArrowDirectionLeft;
+        CGPoint point = (CGPoint){
+            rectX1,
+            rectYM - heightHalf
+        };
         
+        if (point.y < kMargin)
+            point.y = kMargin;
         
+        if ((point.y + borderedContentSize.height + kMargin) > outerHeight)
+            point.y = outerHeight - borderedContentSize.height - kMargin;
         
-    case UIInterfaceOrientationLandscapeLeft:
-        if (widthPlusArrow < rectY0) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionLeft;
-            _contentView.frame = (CGRect){arrowSize + innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM,
-                rectY0 - heightHalf
-            };
-            
-            if (rectXM - heightHalf < kMargin)
-                point.y += kMargin - (rectXM - heightHalf);
-                
-            else if (rectXM + heightHalf > outerWidth - kMargin)
-                point.y -= (rectXM + heightHalf) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectY0 - point.y;
-            _arrowPoint = (CGPoint){ 0, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters (the last one, transform, is further below),
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(0.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else if (widthPlusArrow < (outerHeight - rectY1)) {
-            
-            _arrowDirection = KxMenuViewArrowDirectionRight;
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            CGPoint point = (CGPoint){
-                rectXM - widthPlusArrow,
-                rectY1 - heightHalf
-            };
-            
-            if (rectXM - heightHalf < kMargin)
-                point.y += kMargin - (rectXM - heightHalf);
-                
-            else if (rectXM + heightHalf > outerWidth - kMargin)
-                point.y -= (rectXM + heightHalf) - (outerWidth - kMargin);
-            
-            _arrowPosition = rectY1 - point.y;
-            _arrowPoint = (CGPoint){ borderedContentSize.width, _arrowPosition };
-            
-            // the order that the following 3 properties are set absolutely matters (the last one, transform, is further below),
-            // any order other than anchorPoint, frame, transform and the view is positioned and/or sized incorrectly
-            self.layer.anchorPoint = CGPointMake(1.0, _arrowPosition / borderedContentSize.height);
-            
-            self.frame = (CGRect) {
-                point,
-                borderedContentSize.width + arrowSize,
-                borderedContentSize.height
-            };
-            
-        } else {
-            
-            _arrowDirection = KxMenuViewArrowDirectionNone;
-            _arrowPosition = 0;
-            _arrowPoint = (CGPoint){ borderedContentSize.width * 0.5f, borderedContentSize.height * 0.5f };
-            _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
-            
-            self.frame = (CGRect) {
-                (outerWidth - borderedContentSize.width)   * 0.5f,
-                (outerHeight - borderedContentSize.height) * 0.5f,
-                borderedContentSize,
-            };
-        }
+        _arrowPosition = rectYM - point.y;
+        _contentView.frame = (CGRect){arrowSize + innerBorder, innerBorder, contentSize};
         
-        self.transform = CGAffineTransformMakeRotation(-M_PI_2);
-        break;
+        self.frame = (CGRect) {
+            
+            point,
+            borderedContentSize.width + arrowSize,
+            borderedContentSize.height
+        };
+        
+    } else if (widthPlusArrow < rectX0) {
+        
+        _arrowDirection = KxMenuViewArrowDirectionRight;
+        CGPoint point = (CGPoint){
+            rectX0 - widthPlusArrow,
+            rectYM - heightHalf
+        };
+        
+        if (point.y < kMargin)
+            point.y = kMargin;
+        
+        if ((point.y + borderedContentSize.height + 5) > outerHeight)
+            point.y = outerHeight - borderedContentSize.height - kMargin;
+        
+        _arrowPosition = rectYM - point.y;
+        _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
+        
+        self.frame = (CGRect) {
+            
+            point,
+            borderedContentSize.width  + arrowSize,
+            borderedContentSize.height
+        };
+        
+    } else {
+        
+        _arrowDirection = KxMenuViewArrowDirectionNone;
+        _arrowPosition = 0;
+        _contentView.frame = (CGRect){innerBorder, innerBorder, contentSize};
+        
+        self.frame = (CGRect) {
+            
+            (outerWidth - borderedContentSize.width)   * 0.5f,
+            (outerHeight - borderedContentSize.height) * 0.5f,
+            borderedContentSize,
+        };
     }
 }
 
@@ -662,16 +371,17 @@ const CGFloat kArrowSize = 12.f;
                      withArrowDirection:_arrowDirection
                             andPosition:_arrowPosition];
     
-    // i can't seem to get this to work correctly
-//    _contentView.hidden = YES;
-//    const CGRect toBounds = self.bounds;
-//    self.bounds = CGRectZero;
+    _contentView.hidden = YES;
+    
+    // why is growing from arrow point not working anymore?
+//    const CGRect toFrame = self.frame;
+//    self.frame = (CGRect){self.arrowPoint, 1, 1};
 //    
 //    [UIView animateWithDuration:0.2
 //                     animations:^(void) {
 //                         
 //                         self.alpha = 1.0f;
-//                         self.bounds = toBounds;
+//                         self.frame = toFrame;
 //                         
 //                     } completion:^(BOOL completed) {
 //                         _contentView.hidden = NO;
@@ -679,7 +389,9 @@ const CGFloat kArrowSize = 12.f;
     [UIView animateWithDuration:0.2
                      animations:^(void) {
                          self.alpha = 1.0f;
-                     } completion:NULL];
+                     } completion:^(BOOL completed) {
+                         _contentView.hidden = NO;
+                     }];
     
 }
 
@@ -704,16 +416,17 @@ const CGFloat kArrowSize = 12.f;
                      withArrowDirection:_arrowDirection
                             andPosition:_arrowPosition];
     
-    // i can't seem to get this to work correctly
-//    _contentView.hidden = YES;
-//    const CGRect toBounds = self.bounds;
-//    self.bounds = CGRectZero;
+    _contentView.hidden = YES;
+    
+    // why is growing from arrow point not working anymore?
+//    const CGRect toFrame = self.frame;
+//    self.frame = (CGRect){self.arrowPoint, 1, 1};
 //    
 //    [UIView animateWithDuration:0.2
 //                     animations:^(void) {
 //                         
 //                         self.alpha = 1.0f;
-//                         self.bounds = toBounds;
+//                         self.frame = toFrame;
 //                         
 //                     } completion:^(BOOL completed) {
 //                         _contentView.hidden = NO;
@@ -721,7 +434,9 @@ const CGFloat kArrowSize = 12.f;
     [UIView animateWithDuration:0.2
                      animations:^(void) {
                          self.alpha = 1.0f;
-                     } completion:NULL];
+                     } completion:^(BOOL completed) {
+                         _contentView.hidden = NO;
+                     }];
     
 }
 
@@ -731,15 +446,16 @@ const CGFloat kArrowSize = 12.f;
      
         if (animated) {
             
-            // i can't seem to get this to work correctly
-            //_contentView.hidden = YES;
-            //const CGRect toBounds = CGRectZero;
+            _contentView.hidden = YES;
+            
+            // why is shrinking to arrow point not working anymore?
+//            const CGRect toFrame = (CGRect){self.arrowPoint, 1, 1};
             
             [UIView animateWithDuration:0.2
                              animations:^(void) {
                                  
                                  self.alpha = 0;
-                                 //self.bounds = toBounds;
+//                                 self.frame = toFrame;
                                  
                              } completion:^(BOOL finished) {
                                  
@@ -922,6 +638,34 @@ const CGFloat kArrowSize = 12.f;
     contentView.frame = (CGRect){0, 0, maxItemWidth, itemY + kMarginY * 2};
     
     return [contentView autorelease];
+}
+
+- (CGPoint) arrowPoint
+{
+    CGPoint point;
+    
+    if (_arrowDirection == KxMenuViewArrowDirectionUp) {
+        
+        point = (CGPoint){ CGRectGetMinX(self.frame) + _arrowPosition, CGRectGetMinY(self.frame) };
+        
+    } else if (_arrowDirection == KxMenuViewArrowDirectionDown) {
+        
+        point = (CGPoint){ CGRectGetMinX(self.frame) + _arrowPosition, CGRectGetMaxY(self.frame) };
+        
+    } else if (_arrowDirection == KxMenuViewArrowDirectionLeft) {
+        
+        point = (CGPoint){ CGRectGetMinX(self.frame), CGRectGetMinY(self.frame) + _arrowPosition  };
+        
+    } else if (_arrowDirection == KxMenuViewArrowDirectionRight) {
+        
+        point = (CGPoint){ CGRectGetMaxX(self.frame), CGRectGetMinY(self.frame) + _arrowPosition  };
+        
+    } else {
+        
+        point = self.center;
+    }
+    
+    return point;
 }
 
 + (UIImage *) selectedImage: (CGSize) size
