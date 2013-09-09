@@ -57,6 +57,7 @@ const CGFloat kArrowSize = 12.f;
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface KxMenuView : UIView
+- (void)dismissMenu:(BOOL) animated;
 @end
 
 @interface KxMenuOverlay : UIView
@@ -82,10 +83,9 @@ const CGFloat kArrowSize = 12.f;
     if (touched == self) {
         
         for (UIView *v in self.subviews) {
-            if ([v isKindOfClass:[KxMenuView class]]
-                && [v respondsToSelector:@selector(dismissMenu:)]) {
+            if ([v isKindOfClass:[KxMenuView class]]) {
                 
-                [v performSelector:@selector(dismissMenu:) withObject:@(YES)];
+                [(KxMenuView *)v dismissMenu:YES];
             }
         }
     }
