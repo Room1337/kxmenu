@@ -39,10 +39,10 @@
 // use retain|copy instead of strong & assign instead of weak for compatibility with iOS4
 @property (readwrite, nonatomic, retain) UIImage *image;
 @property (readwrite, nonatomic, copy) NSString *title;
-@property (readwrite, nonatomic) id target;
-@property (readwrite, nonatomic) SEL action;
+@property (readwrite, nonatomic, assign) id target;
+@property (readwrite, nonatomic, assign) SEL action;
 @property (readwrite, nonatomic, retain) UIColor *foreColor;
-@property (readwrite, nonatomic) NSTextAlignment alignment;
+@property (readwrite, nonatomic, assign) NSTextAlignment alignment;
 
 + (instancetype) menuItem:(NSString *) title
                     image:(UIImage *) image

@@ -208,7 +208,6 @@ typedef enum {
 
 - (void) dealloc {
     //NSLog(@"dealloc %@", self);
-    KxMenuRelease(_contentView);
     KxMenuRelease(_menuItems);
     KxMenuSuperDealloc();
 }
@@ -858,7 +857,7 @@ typedef enum {
     
     contentView.frame = (CGRect){0, 0, maxItemWidth, itemY + kMarginY * 2};
     
-    return contentView;
+    return KxMenuReturnAutoreleased(contentView);
 }
 
 + (UIImage *) selectedImage: (CGSize) size
